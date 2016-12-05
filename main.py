@@ -14,7 +14,7 @@ def build_filters(w, h,num_theta, fi, sigma_x, sigma_y, psi):
         print i
         for f_var in fi:
             kernel = get_gabor_kernel(w, h,sigma_x, sigma_y, theta, f_var, psi)
-            kernel =kernel/kernel.sum()
+            kernel = 2.0*kernel/kernel.sum()
             print kernel
             filters.append(kernel)
     return filters
@@ -28,7 +28,8 @@ def get_gabor_kernel(w, h,sigma_x, sigma_y, theta, fi, psi):
     x_theta = x * np.cos(theta) + y * np.sin(theta)
     y_theta = -x * np.sin(theta) + y * np.cos(theta)
     #Calculate the gabor kernel according the formulae
-    gb = np.exp(-0.5*(x_theta ** 2.0 / sigma_x ** 2.0 + y_theta ** 2.0 / sigma_y ** 2.0)) * np.cos(2 * np.pi * fi * x_theta + psi)
+    gb = np.exp(-1.0*(x_theta ** 2.0 / sigma_x ** 2.0 + y_theta ** 2.0 / sigma_y ** 2.0)) * np.cos(2 * np.pi * fi * x_theta + psi)
+    print gb
     return gb
 
 
@@ -87,6 +88,7 @@ def main(argv):
     cv2.imshow('8',k[7])
     cv2.imshow('9',k[8])
     cv2.imshow('10',k[9])
+    cv2.imshow('orig',img)
     cv2.waitKey()
     
 
