@@ -15,7 +15,7 @@ def build_filters(w, h,num_theta, fi, sigma_x, sigma_y, psi):
         for f_var in fi:
             kernel = get_gabor_kernel(w, h,sigma_x, sigma_y, theta, f_var, psi)
             kernel = 2.0*kernel/kernel.sum()
-            print kernel
+            kernel = cv2.normalize(kernel, kernel, 1, 0, cv2.NORM_L1 )
             filters.append(kernel)
     return filters
 
@@ -31,20 +31,6 @@ def get_gabor_kernel(w, h,sigma_x, sigma_y, theta, fi, psi):
     gb = np.exp(-1.0*(x_theta ** 2.0 / sigma_x ** 2.0 + y_theta ** 2.0 / sigma_y ** 2.0)) * np.cos(2 * np.pi * fi * x_theta + psi)
     print gb
     return gb
-
-
-def build_filters2():
-    """ returns a list of kernels in several orientations
-    """
-    filters = []
-    ksize = 3
-    for theta in np.arange(0, np.pi, np.pi / 5):
-        params = {'ksize':(ksize, ksize), 'sigma':1.0, 'theta':theta, 'lambd':1.2,
-                  'gamma':0.02, 'psi':np.pi/2, 'ktype':cv2.CV_32F}
-        kern = cv2.getGaborKernel(**params)
-        #kern /= 1.5*kern.sum()
-        filters.append((kern,params))
-    return filters
 
 def process(img, filters):
     """ returns the img filtered by the filter list
@@ -63,6 +49,8 @@ def normalize(beta, alpha, img):
         mins = np.ones((img.shape[0], img.shape[1])) * img.min()
         maxs = np.ones((img.shape[0], img.shape[1])) * img.max()
         return (img - mins)*(beta - alpha)/(maxs - mins) + alpha
+
+
 
 def main(argv):
     path = argv[0]
